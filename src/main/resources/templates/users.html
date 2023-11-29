@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Список пользователей</title>
+</head>
+<body>
+<h1>Список пользователей</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Имя пользователя</th>
+        <th>Фамилия</th>
+        <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.username}"></td>
+        <td th:text="${user.surname}"></td>
+        <td>
+            <a th:href="@{/admin/user/{id}(id=${user.id})}">Просмотр</a>
+            <a th:href="@{/admin/user/{id}/edit(id=${user.id})}">Редактировать</a>
+            <form th:action="@{/admin/delete/{id}(id=${user.id})}" method="post">
+                <input type="hidden" name="_method" value="delete"/>
+                <button type="submit">Удалить</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<a th:href="@{/admin/new}" sec:authorize="hasRole('ADMIN')">Создать пользователя</a>
+<a th:href="@{/logout}">Выйти</a>
+</body>
+</html>

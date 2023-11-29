@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Страница администратора</title>
+</head>
+<body>
+<h1>Добро пожаловать, администратор!</h1>
+<ul>
+    <li><a th:href="@{/admin/user}">Просмотр пользователей</a></li>
+    <li><a th:href="@{/admin/new}">Создать пользователя</a></li>
+</ul>
+<p sec:authorize="hasRole('ADMIN')">Эта информация доступна только администратору.</p>
+<a th:href="@{/logout}">Выйти</a>
+</body>
+</html>
