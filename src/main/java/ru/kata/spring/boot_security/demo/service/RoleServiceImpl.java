@@ -6,7 +6,8 @@ import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 
 import javax.management.relation.RoleNotFoundException;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -19,8 +20,8 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<Role> findAll() {
-        return roleRepository.findAll();
+    public Set<Role> findAll() {
+        return new HashSet<>(roleRepository.findAll());
     }
 
     @Override

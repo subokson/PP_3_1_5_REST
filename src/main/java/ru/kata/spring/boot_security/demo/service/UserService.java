@@ -7,18 +7,15 @@ import java.util.List;
 
 public interface UserService {
 
-    public User findByName(String name);
+    public User findByEmail(String email);
 
     public List<User> getAllUsers();
 
     public User findUserById(Long id);
 
-    public boolean addUser(User user);
+    public void addUser(User user);
 
-    public void updateUser(User user, Long id);
+    public void updateUser(User user);
 
     public void deleteUser(Long id);
-
-    boolean isUserExists(String username);
-
 }

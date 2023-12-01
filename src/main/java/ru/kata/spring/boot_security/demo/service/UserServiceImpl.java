@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
@@ -22,8 +23,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByName(String name) {
-        return userRepository.findUserByUsername(name).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    public User findByEmail(String name) {
+        return userRepository.findByEmail(name).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     @Override
@@ -37,30 +38,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean addUser(User user) {
-        if (userRepository.findUserByUsername(user.getUsername()).isPresent()) {
-            return false;
-        } else {
-            user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-            userRepository.save(user);
-        }
-        return true;
+    public void addUser(User user) {
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
     }
 
+    @Transactional
     @Override
-    public void updateUser(User user, Long id) {
-        User userUpdate = findUserById(id);
-        if (userUpdate == null) {
-            throw new UsernameNotFoundException("Ошибка выполнения");
-        }
-
-        userUpdate.setUsername(user.getUsername());
-        userUpdate.setSurname(user.getSurname());
-        if (!userUpdate.getPassword().equals(user.getPassword())) {
-            userUpdate.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        }
-        userUpdate.setRoles(user.getRoles());
-        userRepository.flush();
+    public void updateUser(User user) {
+        user.setUsername(user.getUsername());
+        user.setSurname(user.getSurname());
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setAge(user.getAge());
+        user.setEmail(user.getEmail());
+        user.setRoles(user.getRole());
+        userRepository.save(user);
     }
 
     @Override
@@ -70,10 +62,5 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new UsernameNotFoundException("Пользователь не найден");
         }
-    }
-
-    @Override
-    public boolean isUserExists(String username) {
-        return userRepository.findUserByUsername(username).isPresent();
     }
 }

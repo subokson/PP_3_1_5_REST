@@ -13,13 +13,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -30,37 +30,41 @@ public class User implements UserDetails {
     @Column(name = "id")
     private Long id;
 
-    @NotEmpty(message = "Поле не может быть пустым")
+    @Email
+    @Column(name = "email", unique = true)
+    private String email;
+
     @Size(min = 2, max = 20, message = "Количество символов должно быть от 2 до 20")
-    @Column(name = "username", unique = true)
+    @Column(name = "username")
     private String username;
 
-
-    @NotEmpty(message = "Поле не может быть пустым")
     @Size(min = 2, max = 30, message = "Количество символов должно быть от 2 до 30")
-    @Column(name = "surname", unique = true)
+    @Column(name = "surname")
     private String surname;
 
-    @NotEmpty
+    @Column(name = "age")
+    private byte age;
+
     @Size(min = 8, max = 255, message = "Длинна пароля от 8 до 255 символов")
     @Column(name = "password")
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roles = new ArrayList<>();
+    private Set<Role> roles;
 
     public User() {
 
     }
 
-    public User(Long id, String username, String surname, String password, List<Role> roles) {
-        this.id = id;
-        this.username = username;
-        this.surname = surname;
+    public User(String firstname, String lastname, String password, byte age, String email, Set<Role> roles) {
+        this.username = firstname;
+        this.surname = lastname;
         this.password = password;
+        this.age = age;
+        this.email = email;
         this.roles = roles;
     }
 
@@ -68,13 +72,8 @@ public class User implements UserDetails {
     }
 
     @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
+        return getRole();
     }
 
     @Override
@@ -131,20 +130,38 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public List<Role> getRoles() {
+    public Set<Role> getRole() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public byte getAge() {
+        return age;
+    }
+
+    public void setAge(byte age) {
+        this.age = age;
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
+                ", email='" + email + '\'' +
                 ", username='" + username + '\'' +
                 ", surname='" + surname + '\'' +
+                ", age=" + age +
                 ", password='" + password + '\'' +
                 ", roles=" + roles +
                 '}';
@@ -155,6 +172,11 @@ public class User implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(surname, user.surname) && Objects.equals(password, user.password) && Objects.equals(roles, user.roles);
+        return age == user.age && Objects.equals(id, user.id) && Objects.equals(email, user.email) && Objects.equals(username, user.username) && Objects.equals(surname, user.surname) && Objects.equals(password, user.password) && Objects.equals(roles, user.roles);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email, username, surname, age, password, roles);
     }
 }
