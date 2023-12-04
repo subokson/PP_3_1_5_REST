@@ -4,10 +4,10 @@ package ru.kata.spring.boot_security.demo.service;
 import ru.kata.spring.boot_security.demo.model.Role;
 
 import javax.management.relation.RoleNotFoundException;
-import java.util.Set;
+import java.util.List;
 
 public interface RoleService {
-    public Set<Role> findAll();
+    public List<Role> findAll();
 
     void saveRole(Role role);
 

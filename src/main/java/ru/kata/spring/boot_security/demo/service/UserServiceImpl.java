@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
+
 import java.util.List;
 
 @Service
@@ -38,24 +39,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void addUser(User user) {
+    public User addUser(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
-    @Transactional
     @Override
-    public void updateUser(User user) {
-        user.setUsername(user.getUsername());
+    @Transactional
+    public User updateUser(User user) {
+        user.setFirstname(user.getFirstname());
         user.setSurname(user.getSurname());
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setAge(user.getAge());
         user.setEmail(user.getEmail());
-        user.setRoles(user.getRole());
-        userRepository.save(user);
+        user.setRole(user.getRole());
+        return userRepository.save(user);
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long id) {
         if (userRepository.findById(id).isPresent()) {
             userRepository.deleteById(id);
