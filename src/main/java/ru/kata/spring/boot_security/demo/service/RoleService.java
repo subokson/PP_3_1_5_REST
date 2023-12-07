@@ -7,7 +7,7 @@ import javax.management.relation.RoleNotFoundException;
 import java.util.List;
 
 public interface RoleService {
-    public List<Role> findAll();
+    List<Role> findAll();
 
     void saveRole(Role role);
 

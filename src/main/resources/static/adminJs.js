@@ -159,6 +159,31 @@ async function editUser() {
     }
 }
 
+function handleValidationErrors(errors) {
+    resetErrorMessages();
+
+    for (const error of errors) {
+        const fieldName = error.field;
+        const errorMessage = error.defaultMessage;
+
+        const inputElement = document.getElementById(`edit${fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}`);
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "invalid-feedback";
+        errorDiv.innerText = errorMessage;
+
+        inputElement.classList.add("is-invalid");
+        inputElement.parentNode.insertBefore(errorDiv, inputElement.nextSibling);
+    }
+}
+
+function resetErrorMessages() {
+    const errorDivs = document.querySelectorAll(".invalid-feedback");
+    errorDivs.forEach(errorDiv => errorDiv.remove());
+
+    const inputElements = document.querySelectorAll(".form-control");
+    inputElements.forEach(inputElement => inputElement.classList.remove("is-invalid"));
+}
+
 function getModalEdit(id) {
 
     fetch('/api/getUserById/' + id)
@@ -290,6 +315,8 @@ async function newUser() {
 }
 
 function handleValidationErrors(errors) {
+    resetErrorMessages();
+
     for (const error of errors) {
         const fieldName = error.field;
         const errorMessage = error.defaultMessage;
@@ -300,8 +327,16 @@ function handleValidationErrors(errors) {
         errorDiv.innerText = errorMessage;
 
         inputElement.classList.add("is-invalid");
-        inputElement.parentNode.appendChild(errorDiv);
+        inputElement.parentNode.insertBefore(errorDiv, inputElement.nextSibling);
     }
+}
+
+function resetErrorMessages() {
+    const errorDivs = document.querySelectorAll(".invalid-feedback");
+    errorDivs.forEach(errorDiv => errorDiv.remove());
+
+    const inputElements = document.querySelectorAll(".form-control");
+    inputElements.forEach(inputElement => inputElement.classList.remove("is-invalid"));
 }
 
 function createTableRow(user, roles) {

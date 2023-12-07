@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin panel</title>
@@ -97,6 +100,99 @@
                             <button onclick="newUser()" class="btn btn-success">Add new user</button>
                         </div>
                     </div>
+
+                    <script>
+                        function newUser() {
+                            resetErrorMessages();
+
+                            if (!validateForm()) {
+                                return;
+                            }
+
+                            // Получение данных из формы
+                            const formData = {
+                                firstName: document.getElementById("newFirstName").value,
+                                surname: document.getElementById("newSurname").value,
+                                age: document.getElementById("newAge").value,
+                                email: document.getElementById("newEmail").value,
+                                password: document.getElementById("newPassword").value,
+                                roles: Array.from(document.getElementById("newRoles").selectedOptions).map(option => option.value)
+                            };
+
+                            // AJAX-запрос на сервер
+                            $.ajax({
+                                type: "POST",
+                                url: "/your-server-endpoint", // Замените на адрес вашего сервера
+                                contentType: "application/json; charset=utf-8",
+                                data: JSON.stringify(formData),
+                                success: function (response) {
+                                    // Обработка успешного ответа от сервера
+                                    console.log("Успешно отправлено на сервер:", response);
+                                },
+                                error: function (error) {
+                                    // Обработка ошибок
+                                    console.error("Ошибка при отправке на сервер:", error);
+                                }
+                            });
+                        }
+
+                        function resetErrorMessages() {
+                            document.getElementById("newFirstNameError").innerHTML = "";
+                            document.getElementById("newSurnameError").innerHTML = "";
+                            document.getElementById("newAgeError").innerHTML = "";
+                            document.getElementById("newEmailError").innerHTML = "";
+                            document.getElementById("newPasswordError").innerHTML = "";
+                            document.getElementById("newRolesError").innerHTML = "";
+                        }
+
+                        function validateForm() {
+                            let isValid = true;
+
+                            const firstName = document.getElementById("newFirstName").value;
+                            if (firstName.length < 2 || firstName.length > 20) {
+                                document.getElementById("newFirstNameError").innerHTML = "Имя должно содержать от 2 до 20 символов";
+                                isValid = false;
+                            }
+
+                            const surname = document.getElementById("newSurname").value;
+                            if (surname.trim() === "") {
+                                document.getElementById("newSurnameError").innerHTML = "Фамилия не может быть пустой";
+                                isValid = false;
+                            }
+
+                            const age = document.getElementById("newAge").value;
+                            if (isNaN(age) || age <= 0) {
+                                document.getElementById("newAgeError").innerHTML = "Введите корректный возраст";
+                                isValid = false;
+                            }
+
+                            const email = document.getElementById("newEmail").value;
+                            if (!validateEmail(email)) {
+                                document.getElementById("newEmailError").innerHTML = "Некорректный адрес электронной почты";
+                                isValid = false;
+                            }
+
+                            const password = document.getElementById("newPassword").value;
+                            if (password.length < 6) {
+                                document.getElementById("newPasswordError").innerHTML = "Пароль должен содержать минимум 6 символов";
+                                isValid = false;
+                            }
+
+                            const roles = document.getElementById("newRoles").selectedOptions;
+                            if (roles.length === 0) {
+                                document.getElementById("newRolesError").innerHTML = "Выберите хотя бы одну роль";
+                                isValid = false;
+                            }
+
+                            return isValid;
+                        }
+
+                        function validateEmail(email) {
+                            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                            return emailRegex.test(email);
+                        }
+                    </script>
+
 
                 </div>
             </div>
